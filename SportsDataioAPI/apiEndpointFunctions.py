@@ -7,7 +7,7 @@ API_KEY = "86b4aafa44974957949c2312482b0f27"
 
 
 def main():
-    None #Sike
+    getAllPlayerData(2021)
 
 #########################
 ##### MLB GAME DATA #####
@@ -24,8 +24,7 @@ def getTodaysDate():
     return p1 + "" + monthAbrev + "" + p2
 
 def getGamesByDate():
-    response = requests.get(
-        "https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/" + getTodaysDate() + "?key=" + API_KEY + "")
+    response = requests.get("https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/" + getTodaysDate() + "?key=" + API_KEY + "")
     data = response.json()
     dfItem = pd.DataFrame.from_records(data)
     dfItem.to_csv(r'outCSV/' + str(getTodaysDate()) + 'Games.csv', index=False)
@@ -66,8 +65,22 @@ def getActiveStadiums(): #ONE TIME ONLY
 
 
 ### PLAYER DATA ###
+def getIndividualPlayerData(playerID):
+    response = requests.get("https://api.sportsdata.io/v3/mlb/scores/json/Player/"+str(playerID)+"?key=86b4aafa44974957949c2312482b0f27")
+    data = response.json()
+    dfItem = pd.DataFrame.from_records(data)
+    dfItem.to_csv(r'outCSV/players/' + str(playerID) + '.csv', index=False)
+
+def getAllPlayerData(season):
+    response = requests.get('https://api.sportsdata.io/v3/mlb/stats/json/PlayerSeasonStats/'+str(season)+'?key=86b4aafa44974957949c2312482b0f27')
+    data = response.json()
+    dfItem = pd.DataFrame.from_records(data)
+    dfItem.to_csv(r'outCSV/players_season_stats/' + str(season) + '.csv', index=False)
+
 def getBvP(batter, pitcher):
-    "https://api.sportsdata.io/v3/mlb/stats/json/HitterVsPitcher/%7Bhitterid%7D/%7Bpitcherid%7D?key=86b4aafa44974957949c2312482b0f27"
+    response = requests.get("https://api.sportsdata.io/v3/mlb/stats/json/HitterVsPitcher/%7Bhitterid%7D/%7Bpitcherid%7D?key=86b4aafa44974957949c2312482b0f27")
+
+
 
 
 
@@ -80,10 +93,10 @@ def getTeams():  # ONE TIME ONLY
 
 def getTeamPlayers(team):
     response = requests.get(
-        "https://api.sportsdata.io/v3/mlb/scores/json/Players/" + team + "?key=86b4aafa44974957949c2312482b0f27")
+        "https://api.sportsdata.io/v3/mlb/scores/json/Players/" + str(team) + "?key=86b4aafa44974957949c2312482b0f27")
     data = response.json()
     dfItem = pd.DataFrame.from_records(data)
-    dfItem.to_csv(r'outCSV/' + str(getTodaysDate()) + str(team) + 'StadiumData.csv', index=False)
+    dfItem.to_csv(r'outCSV/players_by_team/' + str(team) + str(getTodaysDate()) + '.csv', index=False)
 
 def getTeamStatsBySeason(year):
     response = requests.get("https://api.sportsdata.io/v3/mlb/scores/json/TeamSeasonStats/%7B" + str(
