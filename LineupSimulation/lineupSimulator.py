@@ -14,19 +14,63 @@ import math, random, time
 # Control Player: Trea Turner 08/03/2021
 
 def main():
-    df = pd.read_csv('dummyBaserunningLineup.csv').to_numpy()
-    simulate_games(1)
+    PAOutcome(1,0)
+    # simulate_games(1)
 
 
 def PAOutcome(team, batter):
-    num = random.randint(1, 10000) / 10000
+    num = random.randint(0, 10001) / 10000
+    df = []
+    if team == 1 or team == 2:               # FIX FOR HOME AND AWAY TEAMS CSVS
+        df = pd.read_csv('dummyBattingLineup.csv').to_numpy()
+    PA = df[batter][1]
+    WalkGroup = df[batter][11] + df[batter][20]
+    # SacGroup = df[batter][21] + df[batter][22]
+    # KGroup = df[batter][12]
+    # ErrorGroup = df[batter][24]
+    HitGroup = df[batter][4]
+
+    # OTHER LINEUP MATH FUNCTIONS
+    # AVG = HitGroup / (PA - WalkGroup - SacGroup)
+    #
+    Singles = df[batter][4] - (df[batter][5] + df[batter][6] + df[batter][7])
+    Doubles = df[batter][5]
+    Triples = df[batter][6]
+    HRs = df[batter][7]
+    bases = Singles + (2*Doubles) + (3*Triples) + (4*HRs)
+    # battingouts = PA - WalkGroup - HitGroup
+
+    hitavgPA = HitGroup/PA
+    outavgPA = (PA - WalkGroup - HitGroup)/PA
+    walkavgPA = WalkGroup/PA
+    #print(str(hitavgPA+outavgPA+walkavgPA)) SHOULD ALWAYS BE 1 BECAUSE SUM OF OUTCOMES
+    #print(num, Singles/PA, (Singles+Doubles)/PA, (Singles+Doubles+Triples)/PA, (Singles+Doubles+Triples+HRs)/PA, hitavgPA+outavgPA) SHOWS OUTCOME FOR H(type) W O
+    if num <= hitavgPA:
+        if num <= Singles/PA:
+            print("1B")
+        elif Singles/PA < num <= (Singles+Doubles)/PA:
+            print("2B")
+        elif (Singles+Doubles)/PA < num <= (Singles+Doubles+Triples)/PA:
+            print("3B")
+        elif (Singles+Doubles+Triples)/PA < num <= (Singles+Doubles+Triples+HRs)/PA:
+            print("HR")
+
+    elif hitavgPA < num <= hitavgPA+outavgPA:
+        print("O")
+        return "Out"
+
+    else:
+        print("W")
+        return "Walk"
+
+
 
 
 def simulate_games(number_of_games):
     for games in range(0, number_of_games):
         # SCORE
         away_score = 0
-        home_score = 1
+        home_score = 0
 
         # BASIC OFFENSE VARIABLES
         away_lineup_index = 0
@@ -57,11 +101,20 @@ def simulate_games(number_of_games):
                         half_inning_counter += 1
                         break
 
-                # print('Inning: ', inning_counter, ' Half Inning:', half_inning_counter, ' Outs:', outs_counter) PRINTS OUT GAME INNINGS AND OUTS AS CHECK
+                elif half_inning_counter % 2 == 1:
+                    #away team hitting
+                    PAOutcome(1, away_lineup_index)
+
+                elif half_inning_counter % 2 == 0:
+                    #home team hitting
+                    PAOutcome(0, home_lineup_index)
+
+
+                print('Game: ' + str(games+1) + ' Inning: ', inning_counter, ' Half Inning:', half_inning_counter, ' Outs:', outs_counter) # PRINTS OUT GAME INNINGS AND OUTS AS CHECK
                 outs_counter += 1  # half inning logic
             outs_counter = 0  # inning logic
 
-        # print("Gameover - Home:" + str(home_score) + " Away:" + str(away_score)) PRINTS RESULT OF GAME
+        print("Game #" + str(games+1) + " over --- Home:" + str(home_score) + " Away:" + str(away_score)) #PRINTS RESULT OF GAME
 
 
 def getBatterStats(team, playerindex):
