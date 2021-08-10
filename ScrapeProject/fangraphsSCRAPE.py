@@ -58,6 +58,8 @@ def BBREF_cleaned_toCSV(file):
     header = newarr[0]
     pd.DataFrame(newarr[1:]).to_csv(file, index=False, header=header)
 
+
+
 main()
 
 
