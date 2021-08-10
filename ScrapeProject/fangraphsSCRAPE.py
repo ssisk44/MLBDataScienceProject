@@ -9,12 +9,7 @@ import time, os
 
 def main():
     getPlayer()
-
-def test():
-    df = pd.read_csv('bryceharper_standard_batting.csv').to_numpy()
-    print(df)
-
-
+    BBREF_cleaned_toCSV('bryceharper_standard_batting.csv')
 
 def get_csv_bbref(link_list):
     chromedriver = "C:/Users/samue/OneDrive/Documents/chromedriver.exe"
@@ -45,7 +40,6 @@ def get_csv_bbref(link_list):
 def getPlayer():
     bharperstats_list = ["https://www.baseball-reference.com/players/h/harpebr03.shtml"]
     raw_csv_data_list = get_csv_bbref(bharperstats_list)
-    print(raw_csv_data_list)
 
     ############# PARSE THIS CANCER #############
     df = pd.DataFrame(raw_csv_data_list)
@@ -53,6 +47,16 @@ def getPlayer():
 
 
 
+def BBREF_cleaned_toCSV(file):
+    df = pd.read_csv(file).to_numpy()
+    arr = df[0][2].split('\n')
+    arr.remove('')
+
+    newarr = []
+    for i in range(0, len(arr)):
+        newarr.append(arr[i].split(','))
+    header = newarr[0]
+    pd.DataFrame(newarr[1:]).to_csv(file, index=False, header=header)
 
 main()
 

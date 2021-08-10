@@ -210,7 +210,7 @@ def createLineup():
 
 
 
-    pd.DataFrame(permustationsList).to_csv("PositionsCSV/permutations.csv", index=False) #THIS IS FOR PERMUTATION TESTING
+    pd.DataFrame(permustationsList).to_csv("permutations.csv", index=False) #THIS IS FOR PERMUTATION TESTING
     pd.DataFrame(NamesLineupsAVGarray).to_csv("PositionsCSV/NLAVG", index=False)
 
 
