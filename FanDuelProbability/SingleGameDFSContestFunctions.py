@@ -14,11 +14,11 @@ def main():
     #
     # ###POSTGAME
     # getAllBoxScores()
-    # parseBoxScoretoPointsPerPlayer(getBoxScoreIndex())
-    # addPlayerScoretoCSV()
+    parseBoxScoretoPointsPerPlayer(getBoxScoreIndex())
+    addPlayerScoretoCSV()
     editCombinationsWITHPlayerScores()
     #seabornScatterplot()
-    moneyCalculationModule(4.44,50)
+    #moneyCalculationModule(4.44,50)
 
 
 
@@ -111,11 +111,11 @@ def getAllBoxScores():
     response = requests.get('https://api.sportsdata.io/v3/mlb/stats/json/BoxScores/'+str(getDateFormatted())+'?key=86b4aafa44974957949c2312482b0f27')
     data = response.json()
     dfItem = pd.DataFrame.from_records(data)
-    dfItem.to_csv(r"ContestsOutput/"+file[11:] + "_retrieved_all_box_scores.csv", index=False)
+    dfItem.to_csv(r"ContestsOutput/"+file[11:] + "_AFTER_GAME_retrieved_all_box_scores.csv", index=False)
 
 ###MAKE SURE TEAM ABBREVS ARE CORRECT
 def getBoxScoreIndex():
-    array = pd.read_csv("ContestsOutput/" + file[11:] + "_retrieved_all_box_scores.csv").to_numpy()
+    array = pd.read_csv("ContestsOutput/" + file[11:] + "_AFTER_GAME_retrieved_all_box_scores.csv").to_numpy()
     index = 0
     for i in range(0,len(array)):
         res = eval(array[i][0])
@@ -127,21 +127,21 @@ def getBoxScoreIndex():
 
 ###CHANGE SCRAMBLED FLOAT###
 def parseBoxScoretoPointsPerPlayer(index):
-    array = pd.read_csv("ContestsOutput/"+file[11:] + "_retrieved_all_box_scores.csv").to_numpy()
+    array = pd.read_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_retrieved_all_box_scores.csv").to_numpy()
     newarr = eval(array[index][3])
     playerstats = pd.DataFrame(newarr)
     columnslist = playerstats.columns
     # for i in columnslist:
     #     print(i)
-    pd.DataFrame(newarr).to_csv(r"ContestsOutput/"+file[11:] + "_after_game_player_stats.csv", index=False)
-    newarr = pd.read_csv("ContestsOutput/"+file[11:] + "_after_game_player_stats.csv").to_numpy()
+    pd.DataFrame(newarr).to_csv(r"ContestsOutput/"+file[11:] + "_AFTER_GAME_player_stats.csv", index=False)
+    newarr = pd.read_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_player_stats.csv").to_numpy()
 
     # SCORING FOR ONE GAME DFS: MVP, ALL-STAR, 3 NORMAL
     ### 1B = 3    2B = 6    3B = 9    HR = 12   BB = 3   HBP = 3   R = 3.2   RBI = 3.5   SB = 6
     ### 42         43       44         45       50        51        40         46         55
-    playerandscores = []
-    playersscorescheck = []
-    psc_headers = ['Name','Singles','Doubles','Triples','Home Runs', 'Walks', 'HBP','R','RBI','SB']
+
+    playersandscores = []
+    headers = ['Name','Singles','Doubles','Triples','Home Runs', 'Walks', 'HBP','R','RBI','SB','Points']
     for i in range(0, len(newarr)):
         name = str(newarr[i][5])
         for letter in range(0, len(name)): ### Adding player to new list without injuries and starting..... THIS IS THE SPECIAL CHARACTER FILTER FOR PLAYER NAMES
@@ -157,11 +157,10 @@ def parseBoxScoretoPointsPerPlayer(index):
         player = name
         scrambledfloat = 1.6
         score = round(newarr[i][42]/scrambledfloat)*3 + round(newarr[i][43]/scrambledfloat)*6 + round(newarr[i][44]/scrambledfloat)*9 + round(newarr[i][45]/scrambledfloat)*12 + round(newarr[i][50]/scrambledfloat)*3 + round(newarr[i][51]/scrambledfloat)*3 + round(newarr[i][40]/scrambledfloat)*3.2 + round(newarr[i][46]/scrambledfloat)*3.5 + round(newarr[i][55]/scrambledfloat)*6
-        playersscorescheck.append([newarr[i][5], round(newarr[i][42]/scrambledfloat), round(newarr[i][43]/scrambledfloat), round(newarr[i][44]/scrambledfloat), round(newarr[i][45]/scrambledfloat), round(newarr[i][50]/scrambledfloat), round(newarr[i][51]/scrambledfloat), round(newarr[i][40]/scrambledfloat), round(newarr[i][46]/scrambledfloat), round(newarr[i][55]/scrambledfloat)])
-        playerandscores.append([player, score])
-    playersscorescheck.sort(key=lambda x: x[2], reverse=True)
-    pd.DataFrame(playersscorescheck).to_csv(r"ContestsOutput/"+file[11:] + "_after_game_necessary_player_stats_retrieved.csv", index=False, header=psc_headers)
-    pd.DataFrame(playerandscores).to_csv(r"ContestsOutput/"+file[11:] + "_after_game_player_dfs_scores.csv", index=False)
+        playersandscores.append([newarr[i][5], round(newarr[i][42]/scrambledfloat), round(newarr[i][43]/scrambledfloat), round(newarr[i][44]/scrambledfloat), round(newarr[i][45]/scrambledfloat), round(newarr[i][50]/scrambledfloat), round(newarr[i][51]/scrambledfloat), round(newarr[i][40]/scrambledfloat), round(newarr[i][46]/scrambledfloat), round(newarr[i][55]/scrambledfloat), score])
+
+    playersandscores.sort(key=lambda x: x[-1], reverse=True)
+    pd.DataFrame(playersandscores).to_csv(r"ContestsOutput/"+file[11:] + "_AFTER_GAME_player_dfs_scores.csv", index=False, header=headers)
 
 def addPlayerScoretoCSV(): #########MAKE SURE BATTING ORDER IS COMPLETE
     pl = pd.read_csv(file+".csv", dtype=object).to_numpy()
@@ -169,22 +168,22 @@ def addPlayerScoretoCSV(): #########MAKE SURE BATTING ORDER IS COMPLETE
     for player in range(0, len(pl)):
         if (str(pl[player][11]) == 'nan') and (int(pl[player][15]) > 0):  ####################
             newarray.append(pl[player])
-    pd.DataFrame(newarray).to_csv("ContestsOutput/"+file[11:] + "_reduced_players_list.csv", index=False)
+    pd.DataFrame(newarray).to_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_reduced_players_list.csv", index=False)
 
-    array = pd.read_csv("ContestsOutput/"+file[11:] + "_reduced_players_list.csv").to_numpy()
-    array2 = pd.read_csv("ContestsOutput/"+file[11:] + "_after_game_player_dfs_scores.csv").to_numpy()
+    array = pd.read_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_reduced_players_list.csv").to_numpy()
+    array2 = pd.read_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_player_dfs_scores.csv").to_numpy()
     array = pd.DataFrame(array)
     array['DFS_Score'] = ""
     array = array.to_numpy()
     for i in range(0, len(array)):
         for j in range(0, len(array2)):
             if array[i][3] == array2[j][0]:
-                array[i][-1] = array2[j][1]
-    pd.DataFrame(array).to_csv("ContestsOutput/"+file[11:] + "_after_game_scores_added_to_reduced_player_list.csv", index=False)
+                array[i][-1] = array2[j][-1]
+    pd.DataFrame(array).to_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_reduced_player_list_and_scores.csv", index=False)
 
 ###FILTER OUTPUT ABILITY###
 def editCombinationsWITHPlayerScores():
-    array = pd.read_csv("ContestsOutput/"+file[11:] + "_after_game_scores_added_to_reduced_player_list.csv").to_numpy()
+    array = pd.read_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_reduced_player_list_and_scores.csv").to_numpy()
     newarray = []
     for player in range(0, len(array)):
         if (str(array[player][11]) == 'nan') and (int(array[player][15]) > 0):
@@ -241,19 +240,19 @@ def editCombinationsWITHPlayerScores():
         if i % 6 == 0:  # every sixth and lineup cost above 30000 ex. permutationsarr[i-6][5]>=30000  ####################### ADD FILTERS
             newpermutationsarr.append(permutationsarr[i - 6])
     newpermutationsarr.sort(key=lambda x: x[7], reverse=True)
-    pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/"+file[11:] + "_after_game_permutations_with_scores.csv", index=False, header=headers)
+    pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_permutations_with_scores.csv", index=False, header=headers)
 
 
     ###ADDING PERCENTILES
-    x = pd.read_csv("ContestsOutput/"+file[11:] + "_after_game_permutations_with_scores.csv")
+    x = pd.read_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_permutations_with_scores.csv")
     x['Predicted DFS Score Percentile Rank'] = x.PredictedDFSScore.rank(pct=True)
     x['Actual DFS Score Percentile Rank'] = x.ActualDFSScore.rank(pct=True)
     headers = ['Name1', 'Name2', 'Name3', 'Name4', 'Name5', 'SalaryTotal', 'PredictedDFSScore', 'ActualDFSScore','Predicted DFS Score Percentile Rank','Actual DFS Score Percentile Rank']
-    pd.DataFrame(x).to_csv("ContestsOutput/"+file[11:] + "_after_game_permutations_with_scores_and_percentiles.csv", index=False, header=headers)
+    pd.DataFrame(x).to_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv", index=False, header=headers)
 
 def seabornScatterplot():
     headers = ['Name1','Name2','Name3','Name4','Name5','SalaryTotal','PredictedDFSScore','ActualDFSScore','Predicted DFS Score Percentile Rank','Actual DFS Score Percentile Rank']
-    array = pd.read_csv("ContestsOutput/"+file[11:] + "_after_game_permutations_with_scores_and_percentiles.csv")
+    array = pd.read_csv("ContestsOutput/"+file[11:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv")
     array = array[array['SalaryTotal'] >= 00000]
     array = array[array['Actual DFS Score Percentile Rank'] >= .750000000000000000]
     print(len(array))
@@ -288,7 +287,7 @@ def getDateFormatted():  #entered 01012021
 
 def moneyCalculationModule(entryfee,entries):
     array = pd.read_csv(
-        "ContestsOutput/" + file[11:] + "_after_game_permutations_with_scores_and_percentiles.csv").to_numpy()
+        "ContestsOutput/" + file[11:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv").to_numpy()
     total = 0
     for i in range(0, 50):
         percentile = array[i][9]
