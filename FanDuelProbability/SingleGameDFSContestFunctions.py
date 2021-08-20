@@ -10,16 +10,16 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 import ast
 
-file = 'SingleGameContestCSVs/08172021PITLAD'  # DONT PUT .csv
+file = 'SingleGameContestCSVs/08182021PITLAD'  # DONT PUT .csv
 
 
 def main():
     ##### PREGAME
     # createCombinationsFromCSV()
     # player_name_rank_counter()
-    # playerLineupSelectorCounter(lineupSelector(150, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 5, 5))
-    # lineupSelectortoCSVExport(lineupSelector(150, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 5, 5))
-    graphVsIndex()
+    # playerLineupSelectorCounter(lineupSelector(150, 20, 20, 20, 20, 5, 20, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4))
+    # lineupSelectortoCSVExport(lineupSelector(150, 20, 20, 20, 20, 5, 20, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4))
+    # graphVsIndex()
 
 
     ##### POSTGAME
@@ -28,7 +28,7 @@ def main():
     # parseBoxScoretoPointsPerPlayer(getBoxScoreIndex())
     # addPlayerScoretoCSV()
     # editCombinationsWITHPlayerScores()
-    # saveBoxScoresInDateRange('08092021', '08172021')
+    saveBoxScoresInDateRange('04012021', '08192021')
 
     ##### MODELING AND STATISTICS
     # seabornScatterplot()
@@ -334,23 +334,22 @@ def playerLineupSelectorCounter(lineupSelectorOutput):
     reduced_players_array = pd.read_csv(
         "ContestsOutput/" + file[21:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
     player_counter_array = []
-    headers = ['Player Name', "# of MVPs", "# of All Stars", "# of Regulars"]
+    headers = ['Player Name', "# of MVPs", "# of All Stars", "# of Regulars", 'Total Lineups In']
 
     for name in range(0, len(reduced_players_array)):
-        player_counter_array.append([reduced_players_array[name][3], 0, 0, 0])
+        player_counter_array.append([reduced_players_array[name][3], 0, 0, 0, 0])
 
     for i in range(0, len(lineupSelectorOutput)):
         for j in range(0, len(player_counter_array)):
             for k in range(0, 5):
-
                 if lineupSelectorOutput[i][k] == player_counter_array[j][0]:
                     if k == 0:
                         player_counter_array[j][1] += 1
                     if k == 1:
-                        player_counter_array[j][2] += 2
+                        player_counter_array[j][2] += 1
                     if k == 2 or k == 3 or k == 4:
-                        player_counter_array[j][3] += 3
-
+                        player_counter_array[j][3] += 1
+            player_counter_array[j][4] = player_counter_array[j][1] + player_counter_array[j][2] + player_counter_array[j][3]
     pd.DataFrame(player_counter_array).to_csv(
         "ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineup_selector_counter.csv", index=False,
         header=headers)  # THIS IS FOR PERMUTATION TESTING
@@ -684,14 +683,14 @@ def saveBoxScoresInDateRange(date_begin, date_end):  # saveBoxScoresInDateRange(
             print("Existing box score FOUND from date:", str(current_date)[0:10])
         else:
             print("NO box score found for date:", str(current_date)[0:10])
-            # date_for_API = getDateFormatedforAPI(str(current_date)[0:10])
-            # response = requests.get(
-            #     'https://api.sportsdata.io/v3/mlb/stats/json/BoxScores/' + date_for_API + '?key=86b4aafa44974957949c2312482b0f27')
-            # data = response.json()
-            # dfItem = pd.DataFrame.from_records(data)
-            # dfItem.to_csv(r"DailyBoxScores/" + str(
-            #     str(current_date)[5:7] + str(current_date)[8:10] + str(current_date)[0:4]) + "_all_box_scores.csv",
-            #               index=False)
+            date_for_API = getDateFormatedforAPI(str(current_date)[0:10])
+            response = requests.get(
+                'https://api.sportsdata.io/v3/mlb/stats/json/BoxScores/' + date_for_API + '?key=86b4aafa44974957949c2312482b0f27')
+            data = response.json()
+            dfItem = pd.DataFrame.from_records(data)
+            dfItem.to_csv(r"DailyBoxScores/" + str(
+                str(current_date)[5:7] + str(current_date)[8:10] + str(current_date)[0:4]) + "_all_box_scores.csv",
+                          index=False)
         current_date = current_date + datetime.timedelta(days=1)
 
 
