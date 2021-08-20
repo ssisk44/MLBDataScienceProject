@@ -17,7 +17,7 @@ def main():
     print("TOTAL RUN TIME: ", end-start)
 
 def readfile():
-    file = 'SingleGameContestCSVs/073021Squeeze.csv'
+    file = 'SingleGameDFS/SingleGameContestCSVs/073021Squeeze.csv'
     df = pd.read_csv(file)
     array = df.to_numpy()
 
