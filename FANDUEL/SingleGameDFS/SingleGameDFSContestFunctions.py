@@ -25,14 +25,15 @@ def main():
     ##### POSTGAME
     # getAllBoxScores()
     # getBoxScoreIndex()
-    # parseBoxScoretoPointsPerPlayer(getBoxScoreIndex())
+    parseBoxScoretoPointsPerPlayer(getBoxScoreIndex())
     # addPlayerScoretoCSV()
     # editCombinationsWITHPlayerScores()
-    saveBoxScoresInDateRange('04012021', '08192021')
+
 
     ##### MODELING AND STATISTICS
     # seabornScatterplot()
     # linearRegression('ActualDFSScore', 'PredictedDFSScore')
+    # saveBoxScoresInDateRange('04012021', '08202021')
 
 
 ########################################################################################################################
@@ -384,11 +385,11 @@ def getAllBoxScores():
         getDateFormatted()) + '?key=86b4aafa44974957949c2312482b0f27')
     data = response.json()
     dfItem = pd.DataFrame.from_records(data)
-    dfItem.to_csv(r"DailyBoxScores/" + file[21:29] + "_all_box_scores.csv", index=False)
+    dfItem.to_csv(r"DailyBoxScores/" + file[21:] + "_all_box_scores.csv", index=False)
 
 
 def getBoxScoreIndex():
-    array = pd.read_csv("DailyBoxScores/" + file[21:29] + "_all_box_scores.csv").to_numpy()
+    array = pd.read_csv("C:/Users/samue/PycharmProjects/MLBFanduelProject/ALL_DATA/DailyBoxScores/" + file[22:30] + "_all_box_scores.csv").to_numpy()
     team_abbreviations = ['MIL', 'PIT', 'CIN', 'PHI', 'ATL', 'WSH', 'BAL', 'BOS', 'CLE', 'DET', 'CHC', 'MIA', 'NYY',
                           'CHW', 'STL', 'KC', 'TB', 'MIN', 'OAK', 'TEX', 'COL', 'SF', 'HOU', 'LAA', 'SD', 'ARI', 'TOR',
                           'SEA', 'LAD', 'NYM']
@@ -398,37 +399,41 @@ def getBoxScoreIndex():
         date = str(list(res.values())[5][5:7] + list(res.values())[5][8:10] + list(res.values())[5][0:4])
         awayteam = list(res.values())[6]
         hometeam = list(res.values())[7]
-        if date == file[21:29] and awayteam == file[29:31] and hometeam == file[31:33] and file[
-                                                                                           29:31] in team_abbreviations and file[
-                                                                                                                            31:33] in team_abbreviations:  ############# BOTH 2 LETTER ABBREVIATIONS
+        # print(date, awayteam, hometeam)
+        # print(file[22:30], file[30:33], file[33:36])
+        # print('\n')
+
+        if date == file[22:30] and awayteam == file[30:32] and hometeam == file[32:35] and file[
+                                                                                           31:33] in team_abbreviations and file[
+                                                                                                                            33:35] in team_abbreviations:  ############# BOTH 2 LETTER ABBREVIATIONS
             return i
 
-        elif date == file[21:29] and awayteam == file[29:31] and hometeam == file[31:34] and file[
-                                                                                             29:31] in team_abbreviations and file[
-                                                                                                                              31:34] in team_abbreviations:  ############# 2 THEN 3 LETTER ABBREVIATION
+        elif date == file[22:30] and awayteam == file[30:32] and hometeam == file[32:35] and file[
+                                                                                             30:32] in team_abbreviations and file[
+                                                                                                                              32:35] in team_abbreviations:  ############# 2 THEN 3 LETTER ABBREVIATION
             return i
-        elif date == file[21:29] and awayteam == file[29:32] and hometeam == file[32:34] and file[
-                                                                                             29:32] in team_abbreviations and file[
-                                                                                                                              32:34] in team_abbreviations:  ############# 3 THEN 2 LETTER ABBREVIATION
+        elif date == file[22:30] and awayteam == file[30:33] and hometeam == file[33:35] and file[
+                                                                                             30:33] in team_abbreviations and file[
+                                                                                                                              33:35] in team_abbreviations:  ############# 3 THEN 2 LETTER ABBREVIATION
             return i
 
-        elif date == file[21:29] and awayteam == file[29:32] and hometeam == file[32:35] and file[
-                                                                                             29:32] in team_abbreviations and file[
-                                                                                                                              32:35] in team_abbreviations:  ############# BOTH 3 LETTER ABBREVIATIONS
+        elif date == file[22:30] and awayteam == file[30:33] and hometeam == file[33:36] and file[
+                                                                                             30:33] in team_abbreviations and file[
+                                                                                                                              33:36] in team_abbreviations:  ############# BOTH 3 LETTER ABBREVIATIONS
             return i
 
 
 ###CHANGE SCRAMBLED FLOAT###
 def parseBoxScoretoPointsPerPlayer(index):
-    array = pd.read_csv("ContestsOutput/" + file[21:29] + "_all_box_scores.csv").to_numpy()
+    array = pd.read_csv("C:/Users/samue/PycharmProjects/MLBFanduelProject/ALL_DATA/DailyBoxScores/" + file[22:30] + "_all_box_scores.csv").to_numpy()
     print(index)
     newarr = eval(array[index][3])
     playerstats = pd.DataFrame(newarr)
     columnslist = playerstats.columns
     # for i in columnslist:
     #     print(i)
-    pd.DataFrame(newarr).to_csv(r"ContestsOutput/" + file[21:] + "_AFTER_GAME_player_stats.csv", index=False)
-    newarr = pd.read_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_player_stats.csv").to_numpy()
+    pd.DataFrame(newarr).to_csv(r"ContestsOutput/" + file[22:] + "_AFTER_GAME_player_stats.csv", index=False)
+    newarr = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_player_stats.csv").to_numpy()
 
     # SCORING FOR ONE GAME DFS: MVP, ALL-STAR, 3 NORMAL
     ### 1B = 3    2B = 6    3B = 9    HR = 12   BB = 3   HBP = 3   R = 3.2   RBI = 3.5   SB = 6
@@ -436,6 +441,14 @@ def parseBoxScoretoPointsPerPlayer(index):
 
     playersandscores = []
     headers = ['Name', 'Singles', 'Doubles', 'Triples', 'Home Runs', 'Walks', 'HBP', 'R', 'RBI', 'SB', 'Points']
+
+    #gets scrambled float to get player stats
+    scrambledfloat = 9999999999.99
+    for i in range(0, len(newarr)):
+        arr = [newarr[i][39], newarr[i][40], newarr[i][41], scrambledfloat]
+        scrambledfloat = min(i for i in arr if i > 0)
+
+
     for i in range(0, len(newarr)):
         name = str(newarr[i][5])
         for letter in range(0,
@@ -452,7 +465,7 @@ def parseBoxScoretoPointsPerPlayer(index):
                 name = str(name[0:letter] + 'e' + name[letter + 1:])
 
         player = name
-        scrambledfloat = .6
+
         score = round(newarr[i][42] / scrambledfloat) * 3 + round(newarr[i][43] / scrambledfloat) * 6 + round(
             newarr[i][44] / scrambledfloat) * 9 + round(newarr[i][45] / scrambledfloat) * 12 + round(
             newarr[i][50] / scrambledfloat) * 3 + round(newarr[i][51] / scrambledfloat) * 3 + round(
@@ -466,7 +479,7 @@ def parseBoxScoretoPointsPerPlayer(index):
              round(newarr[i][55] / scrambledfloat), score])
 
     playersandscores.sort(key=lambda x: x[-1], reverse=True)
-    pd.DataFrame(playersandscores).to_csv(r"ContestsOutput/" + file[21:] + "_AFTER_GAME_player_dfs_scores.csv",
+    pd.DataFrame(playersandscores).to_csv(r"ContestsOutput/" + file[22:] + "_AFTER_GAME_player_dfs_scores.csv",
                                           index=False, header=headers)
 
 
@@ -493,10 +506,10 @@ def addPlayerScoretoCSV():
             elif newarr[i][3][letter] == 'é':
                 name = str(name[0:letter] + 'e' + name[letter + 1:])
 
-    pd.DataFrame(newarr).to_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_reduced_players_list.csv", index=False)
+    pd.DataFrame(newarr).to_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_reduced_players_list.csv", index=False)
 
-    array = pd.read_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_reduced_players_list.csv").to_numpy()
-    array2 = pd.read_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_player_dfs_scores.csv").to_numpy()
+    array = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_reduced_players_list.csv").to_numpy()
+    array2 = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_player_dfs_scores.csv").to_numpy()
     array = pd.DataFrame(array)
     array['DFS_Score'] = ""
     array = array.to_numpy()
@@ -504,13 +517,13 @@ def addPlayerScoretoCSV():
         for j in range(0, len(array2)):
             if array[i][3] == array2[j][0]:
                 array[i][-1] = array2[j][-1]
-    pd.DataFrame(array).to_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_reduced_player_list_and_scores.csv",
+    pd.DataFrame(array).to_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_reduced_player_list_and_scores.csv",
                                index=False)
 
 
 ###FILTER OUTPUT ABILITY###
 def editCombinationsWITHPlayerScores():
-    array = pd.read_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_reduced_player_list_and_scores.csv").to_numpy()
+    array = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_reduced_player_list_and_scores.csv").to_numpy()
     newarray = []
     for player in range(0, len(array)):
         if (str(array[player][11]) == 'nan') and (int(array[player][15]) > 0):
@@ -564,12 +577,12 @@ def editCombinationsWITHPlayerScores():
 
     newpermutationsarr = []  # removes the repition of every six entries being the same
     for i in range(6, len(permutationsarr) + 6):
-        if i % 6 == 0:  # every sixth and lineup cost above 30000 ex. permutationsarr[i-6][5]>=30000  ####################### ADD FILTERS
+        if i % 6 == 0:  # every sixth and lineup cost      ####################### ADD FILTERS above 30000 ex. permutationsarr[i-6][5]>=30000
             newpermutationsarr.append(permutationsarr[i - 6])
-    newpermutationsarr.sort(key=lambda x: x[6], reverse=True)
+    newpermutationsarr.sort(key=lambda x: x[7], reverse=True)
 
     # check for all players team same and remove them
-    players = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
+    players = pd.read_csv("ContestsOutput/" + file[22:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
     # print(len(newpermutationsarr))
     poplist = []
     for i in range(0, len(newpermutationsarr)):
@@ -592,16 +605,16 @@ def editCombinationsWITHPlayerScores():
     # print(len(poplist))
 
     #save to csv
-    pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_permutations_with_scores.csv",
+    pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_permutations_with_scores.csv",
                                             index=False, header=headers)
 
     ###ADDING PERCENTILES
-    x = pd.read_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_permutations_with_scores.csv")
+    x = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_permutations_with_scores.csv")
     x['Predicted DFS Score Percentile Rank'] = x.PredictedDFSScore.rank(pct=True)
     x['Actual DFS Score Percentile Rank'] = x.ActualDFSScore.rank(pct=True)
     headers = ['Name1', 'Name2', 'Name3', 'Name4', 'Name5', 'SalaryTotal', 'PredictedDFSScore', 'ActualDFSScore',
                'Predicted DFS Score Percentile Rank', 'Actual DFS Score Percentile Rank']
-    pd.DataFrame(x).to_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv",
+    pd.DataFrame(x).to_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv",
                            index=False, header=headers)
 
 
@@ -611,7 +624,7 @@ def editCombinationsWITHPlayerScores():
 def seabornScatterplot():
     headers = ['Name1', 'Name2', 'Name3', 'Name4', 'Name5', 'SalaryTotal', 'PredictedDFSScore', 'ActualDFSScore',
                'Predicted DFS Score Percentile Rank', 'Actual DFS Score Percentile Rank']
-    array = pd.read_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv")
+    array = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv")
     array = array[array['SalaryTotal'] >= 00000]
     # array = array[array['Actual DFS Score Percentile Rank'] >= .750000000000000000]
     print(len(array))
@@ -626,7 +639,7 @@ def seabornScatterplot():
 
 def linearRegression(x_name, y_name):
     # headers = ['Name1', 'Name2', 'Name3', 'Name4', 'Name5', 'SalaryTotal', 'PredictedDFSScore', 'ActualDFSScore','Predicted DFS Score Percentile Rank', 'Actual DFS Score Percentile Rank']
-    array = pd.read_csv("ContestsOutput/" + file[21:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv")
+    array = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv")
 
     headers = []
     for col in array.columns:
@@ -663,9 +676,9 @@ def getTodaysDate():
 def getDateFormatted():  # entered 01012021
     CalendarDict = {"01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr", "05": "May", "06": "Jun", "07": "Jul",
                     "08": "Aug", "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"}
-    day = file[13:15]
-    year = file[15:19]
-    monthAbrev = CalendarDict[file[21:13]]
+    day = file[24:26]
+    year = file[26:]
+    monthAbrev = CalendarDict[file[22:24]]
     x = str(year + '-' + monthAbrev + '-' + day)
     return x
 
@@ -688,14 +701,14 @@ def saveBoxScoresInDateRange(date_begin, date_end):  # saveBoxScoresInDateRange(
                 'https://api.sportsdata.io/v3/mlb/stats/json/BoxScores/' + date_for_API + '?key=86b4aafa44974957949c2312482b0f27')
             data = response.json()
             dfItem = pd.DataFrame.from_records(data)
-            dfItem.to_csv(r"DailyBoxScores/" + str(
+            dfItem.to_csv(r"C:/Users/samue/PycharmProjects/MLBFanduelProject/ALL_DATA/DailyBoxScores/" + str(
                 str(current_date)[5:7] + str(current_date)[8:10] + str(current_date)[0:4]) + "_all_box_scores.csv",
                           index=False)
         current_date = current_date + datetime.timedelta(days=1)
 
 
 def checkBoxScoresDirectory(current_date):
-    directory = 'DailyBoxScores'
+    directory = 'C:/Users/samue/PycharmProjects/MLBFanduelProject/ALL_DATA/DailyBoxScores'
     current_date = str(str(current_date)[5:7] + str(current_date)[8:10] + str(current_date)[0:4])
     for filename in os.listdir(directory):
         # print(filename)

@@ -34,9 +34,9 @@ def main():
     # LA_LS_Distance_ML()
     # plotBIP()
     # getPitcherStatcast('Kershaw', 'Clayton', 'LAD', '2021-08-01', '2021-08-18')
-    # getBatterStatcast('Alonso', 'Pete', 'NYM', '2021-08-01', '2021-08-18')
-    getBattingbySeason(2019,2019)
-    getStandings(2021)
+    getBatterStatcast('Alonso', 'Pete', 'NYM', '2021-08-01', '2021-08-18')
+    # getBattingbySeason(2019,2019)
+    # getStandings(2021)
     # getScheduleandResults(2021, 'NYY')
 
 
@@ -49,8 +49,8 @@ def getEveryMLBPitchStats(start_date, end_date):
     stats.to_csv(r''+start_date+'_'+end_date+'_every_MLB_pitch_stats.csv', index=False, header=headers)
 
 ### BATTER STATCAST DATA
-def getBatterStatcast(fname, lname, team, start_date, end_date):
-    b_id = playerid_lookup(lname, fname)['key_mlbam'][0]  # changes on number of players with same name
+def getBatterStatcast(lname, fname, team, start_date, end_date):
+    b_id = playerid_lookup(lname, fname)['key_mlbam'][0] # changes on number of players with same name
     statcast_batter(start_date, end_date, b_id).to_csv(fname+'_'+lname+"_Hitting.csv") # date formatted '2021-08-01'
 
 def getBattingbySeason(start_season, end_season):
