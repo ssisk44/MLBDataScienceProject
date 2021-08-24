@@ -1,5 +1,6 @@
 import datetime
 import fnmatch
+import math
 import os
 from statistics import mean
 import pandas as pd
@@ -8,6 +9,7 @@ import requests
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+import scipy.stats as ss
 
 # file = 'SingleGameContestCSVs/08182021PITLAD'  # DONT PUT .csv
 file = ''
@@ -41,7 +43,7 @@ file = ''
 #################################################### BEFORE GAME #######################################################
 ########################################################################################################################
 
-def createCombinationsFromCSV(lineup_restriction, file):
+def createCombinationsFromCSV(lineup_restriction, file, out):
     array = pd.read_csv(file + ".csv").to_numpy()
     newarray = []
     for player in range(0, len(array)): #removes injuries
@@ -54,7 +56,7 @@ def createCombinationsFromCSV(lineup_restriction, file):
         newarray[counter][-1] = counter
         counter += 1
 
-    pd.DataFrame(newarray).to_csv("ContestsOutput/" + str(file[21:]) + "_BEFORE_GAME_reduced_players_list.csv",
+    pd.DataFrame(newarray).to_csv("ContestsOutput/" + out + str(file[21:]) + "_BEFORE_GAME_reduced_players_list.csv",
                                   index=False)
 
     combos = list(permutations(newarray, 5))
@@ -110,7 +112,7 @@ def createCombinationsFromCSV(lineup_restriction, file):
             newpermutationsarr.append(permutationsarr[i - 6])
 
     # check for all players team same and remove them
-    players = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
+    players = pd.read_csv("ContestsOutput/" + out + file[21:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
     # print(len(newpermutationsarr))
     poplist = []
     for i in range(0, len(newpermutationsarr)):
@@ -133,7 +135,7 @@ def createCombinationsFromCSV(lineup_restriction, file):
 
     #save to a csv
     headers = ['Player1Name', 'Player2Name', 'Player3Name', 'Player4Name', 'Player5Name', 'Salary', 'PredictedDFSScore', "Player1Rank", "Player2Rank", "Player3Rank", "Player4Rank", "Player5Rank", "LineupMeanRank", "Player1BattingOrder", "Player2BattingOrder", "Player3BattingOrder", "Player4BattingOrder", "Player5BattingOrder", "LineupMeanBattingOrder"]
-    pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineup_permutations.csv",index=False, header=headers)  # THIS IS FOR PERMUTATION TESTING
+    pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/" + out + file[21:] + "_BEFORE_GAME_lineup_permutations.csv",index=False, header=headers)  # THIS IS FOR PERMUTATION TESTING
 
 
 def player_name_rank_counter():
@@ -446,7 +448,7 @@ def getBoxScoreIndex(file):
                                                                                                                               33:36] in team_abbreviations:  ############# BOTH 3 LETTER ABBREVIATIONS
             return i
 
-def parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(index, file):
+def parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(index, file, out):
     players = pd.read_csv("C:/Users/samue/PycharmProjects/MLBFanduelProject/ALL_DATA/DailyBoxScores/" + file[22:30] + "_all_box_scores.csv").to_numpy()
     # print("Box Score MLB Game Index = " + str(index))
     newarr = eval(players[index][3])
@@ -502,16 +504,24 @@ def parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(index, file):
     # pd.DataFrame(playersandscores).to_csv(r"ContestsOutput/" + file[22:] + "_AFTER_GAME_player_dfs_scores.csv",
     #                                       index=False, header=headers)
 
-    players = pd.read_csv("ContestsOutput/" + file[22:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
+    players = pd.read_csv("ContestsOutput/" + out + file[22:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
     # playersandscores = pd.read_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_player_dfs_scores.csv").to_numpy()
     players = pd.DataFrame(players)
     players['DFS_Score'] = ""
+    players['DFS_Score_Rank'] = ""
     players = players.to_numpy()
+    scores = []
     for i in range(0, len(players)):
         for j in range(0, len(playersandscores)):
             if players[i][3] == playersandscores[j][0]:
-                players[i][-1] = playersandscores[j][-1]
-    # pd.DataFrame(players).to_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_reduced_player_list_with_scores.csv",index=False)
+                players[i][-2] = playersandscores[j][-1]
+                scores.append(playersandscores[j][-1])
+    score_rank = ss.rankdata(scores)
+    for i in range(0, len(score_rank)):
+        players[i][-1] = int(math.ceil(len(score_rank) - score_rank[i] + 1)) ###depends on number of entries
+
+    pd.DataFrame(players).to_csv("ContestsOutput/" + out + file[22:] + "_AFTER_GAME_reduced_player_list_with_scores.csv",index=False)
+
     # for i in range(0,len(newarr)):  ### Adding player to new list without injuries and starting..... THIS IS THE SPECIAL CHARACTER FILTER FOR PLAYER NAMES
     #     name = str(newarr[i][3])
     #     for letter in range(0, len(name)):
@@ -527,7 +537,7 @@ def parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(index, file):
     #             name = str(name[0:letter] + 'e' + name[letter + 1:])
 
     columns_list = []
-    permutations = pd.read_csv("ContestsOutput/" + file[22:] + "_BEFORE_GAME_lineup_permutations.csv", dtype=object)
+    permutations = pd.read_csv("ContestsOutput/" + out + file[22:] + "_BEFORE_GAME_lineup_permutations.csv", dtype=object)
     permutations['ActualDFSScore'] = ''
     for col in permutations:
         columns_list.append(col)
@@ -556,7 +566,7 @@ def parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(index, file):
         columns_list.append(col)
     permutations = permutations.to_numpy()
     permutations = sorted(permutations, key=lambda x: x[-1], reverse=True)
-    pd.DataFrame(permutations).to_csv("ContestsOutput/" + file[22:] + "_AFTER_GAME_permutations_with_scores.csv",
+    pd.DataFrame(permutations).to_csv("ContestsOutput/" + out + file[22:] + "_AFTER_GAME_permutations_with_scores.csv",
                            index=False, header=columns_list)
 
 
