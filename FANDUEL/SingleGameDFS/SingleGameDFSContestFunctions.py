@@ -12,12 +12,12 @@ from sklearn.linear_model import LinearRegression
 import scipy.stats as ss
 
 # file = 'SingleGameContestCSVs/08182021PITLAD'  # DONT PUT .csv
-file = ''
+# file = '08222021LAACLE'
 
 
 # def main():
     ##### PREGAME
-    # createCombinationsFromCSV(0, None)
+
     # player_name_rank_counter()
 
 
@@ -135,7 +135,13 @@ def createCombinationsFromCSV(lineup_restriction, file, out):
 
     #save to a csv
     headers = ['Player1Name', 'Player2Name', 'Player3Name', 'Player4Name', 'Player5Name', 'Salary', 'PredictedDFSScore', "Player1Rank", "Player2Rank", "Player3Rank", "Player4Rank", "Player5Rank", "LineupMeanRank", "Player1BattingOrder", "Player2BattingOrder", "Player3BattingOrder", "Player4BattingOrder", "Player5BattingOrder", "LineupMeanBattingOrder"]
-    pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/" + out + file[21:] + "_BEFORE_GAME_lineup_permutations.csv",index=False, header=headers)  # THIS IS FOR PERMUTATION TESTING
+    # pd.DataFrame(newpermutationsarr).to_csv("ContestsOutput/" + out + file[21:] + "_BEFORE_GAME_lineup_permutations.csv",index=False, header=headers)
+    x = pd.DataFrame(newpermutationsarr,columns=headers)
+    x['Predicted DFS Score Percentile Rank'] = x.PredictedDFSScore.rank(pct=True)
+    col = []
+    for i in x:
+        col.append(i)
+    x.to_csv("ContestsOutput/" + out + file[21:] + "_BEFORE_GAME_lineup_permutations.csv",index=False, header=col)  # THIS IS FOR PERMUTATION TESTING
 
 
 def player_name_rank_counter():
@@ -163,199 +169,6 @@ def player_name_rank_counter():
     pd.DataFrame(player_counter_array).to_csv(
         "ContestsOutput/" + file[21:] + "_BEFORE_GAME_player_created_lineups_distributions.csv", index=False,
         header=headers)  # THIS IS FOR PERMUTATION TESTING
-
-
-def lineupSelector(numEntries, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16):
-    numEntries = 150
-    lineups = []
-    permutations = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineup_permutations.csv").to_numpy()
-    players = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_reduced_players_list.csv").to_numpy()
-
-    # First Player
-    lineup_counter = 0
-    while lineup_counter <= P1:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P1:
-                break
-            elif permutations[i][0] == players[0][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 2nd Player
-    lineup_counter = 0
-    while lineup_counter <= P2:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P2:
-                break
-            elif permutations[i][0] == players[1][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 3rd Player
-    lineup_counter = 0
-    while lineup_counter <= P3:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P3:
-                break
-            elif permutations[i][0] == players[2][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 4th Player
-    lineup_counter = 0
-    while lineup_counter <= P4:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P4:
-                break
-            elif permutations[i][0] == players[3][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 5th Player
-    lineup_counter = 0
-    while lineup_counter <= P5:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P5:
-                break
-            elif permutations[i][0] == players[4][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 6th Player
-    lineup_counter = 0
-    while lineup_counter <= P6:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P6:
-                break
-            elif permutations[i][0] == players[5][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 7th Player
-    lineup_counter = 0
-    while lineup_counter <= P7:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P7:
-                break
-            elif permutations[i][0] == players[6][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 8th Player
-    lineup_counter = 0
-    while lineup_counter <= P8:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P8:
-                break
-            elif permutations[i][0] == players[7][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 9th Player
-    lineup_counter = 0
-    while lineup_counter <= P9:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P9:
-                break
-            elif permutations[i][0] == players[8][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 10th Player
-    lineup_counter = 0
-    while lineup_counter <= P10:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P10:
-                break
-            elif permutations[i][0] == players[9][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 11th Player
-    lineup_counter = 0
-    while lineup_counter <= P11:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P11:
-                break
-            elif permutations[i][0] == players[10][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 12th Player
-    lineup_counter = 0
-    while lineup_counter <= P12:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P12:
-                break
-            elif permutations[i][0] == players[11][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 13th Player
-    lineup_counter = 0
-    while lineup_counter <= P13:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P13:
-                break
-            elif permutations[i][0] == players[12][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 14th Player
-    lineup_counter = 0
-    while lineup_counter <= P14:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P14:
-                break
-            elif permutations[i][0] == players[13][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 15th Player
-    lineup_counter = 0
-    while lineup_counter <= P15:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P15:
-                break
-            elif permutations[i][0] == players[14][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # 16th Player
-    lineup_counter = 0
-    while lineup_counter <= P16:
-        for i in range(0, len(permutations)):
-            if lineup_counter >= P16:
-                break
-            elif permutations[i][0] == players[15][3]:
-                lineups.append(permutations[i])
-                lineup_counter += 1
-        break
-
-    # for i in range(0, len(lineups)):
-    #     print(str(lineups[i][5]), str(lineups[i][6]))
-    # print("Number of lineups created: " + str(len(lineups)))
-
-    headers = ['Name1', 'Name2', 'Name3', 'Name4', 'Name5', 'Salary', 'LineupScore']
-    pd.DataFrame(lineups).to_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineups_selected.csv", index=False,
-                                 header=headers)
-
-    return lineups
 
 
 def playerLineupSelectorCounter(lineupSelectorOutput):
@@ -557,18 +370,33 @@ def parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(index, file, out):
                         totalscore += float(playersandscores[j][-1])
 
         permutations[i][-1] = totalscore
-
     permutations = pd.DataFrame(permutations, columns=columns_list)
     permutations['Predicted DFS Score Percentile Rank'] = permutations.PredictedDFSScore.rank(pct=True)
     permutations['Actual DFS Score Percentile Rank'] = permutations.ActualDFSScore.rank(pct=True)
+    permutations['Player1PostGameRank'] = 0
+    permutations['Player2PostGameRank'] = 0
+    permutations['Player3PostGameRank'] = 0
+    permutations['Player4PostGameRank'] = 0
+    permutations['Player5PostGameRank'] = 0
     columns_list = []
     for col in permutations:
         columns_list.append(col)
     permutations = permutations.to_numpy()
-    permutations = sorted(permutations, key=lambda x: x[-1], reverse=True)
+    for i in range(0, len(permutations)):
+        permutations[i][22] = (players[int(permutations[i][7])][18])
+        permutations[i][23] = (players[int(permutations[i][8])][18])
+        permutations[i][24] = (players[int(permutations[i][9])][18])
+        permutations[i][25] = (players[int(permutations[i][10])][18])
+        permutations[i][26] = (players[int(permutations[i][11])][18])
+
+
+
+
+    permutations = sorted(permutations, key=lambda x: x[21], reverse=True)
     pd.DataFrame(permutations).to_csv("ContestsOutput/" + out + file[22:] + "_AFTER_GAME_permutations_with_scores.csv",
                            index=False, header=columns_list)
-
+    # x = pd.read_csv("ContestsOutput/" + out + file[22:] + "_AFTER_GAME_permutations_with_scores.csv", dtype=object)
+    # print(x.head(5))
 
 ########################################################################################################################
 ########################################   VISUALIZATION AND STATISTICS  ###############################################
@@ -699,62 +527,8 @@ def getDateFormattedtoDatetime(date):  # date entered like 01012021
     year = int(date[4:8])
     return datetime.datetime(year, day, month)
 
-def moneyCalculationModule(entryfee, entries):
-    array = pd.read_csv(
-        "ContestsOutput/" + file[21:] + "_AFTER_GAME_permutations_with_scores_and_percentiles.csv").to_numpy()
-    total = 0
-    for i in range(0, 50):
-        percentile = array[i][9]
-        if percentile > 0.999378109:
-            total += 1000
-        elif percentile > 0.998756219:
-            total += 500
-        elif percentile > 0.998134328:
-            total += 250
-        elif percentile > 0.997512438:
-            total += 125
-        elif percentile > 0.996890547:
-            total += 100
-        elif percentile > 0.995646766:
-            total += 75
-        elif percentile > 0.993781095:
-            total += 50
-        elif percentile > 0.990671642:
-            total += 40
-        elif percentile > 0.987562189:
-            total += 30
-        elif percentile > 0.983830846:
-            total += 20
-        elif percentile > 0.975124378:
-            total += 15
-        elif percentile > 0.955845771:
-            total += 12
-        elif percentile > 0.928482587:
-            total += 10
-        elif percentile > 0.86318408:
-            total += 9
-        elif percentile > 0.763059701:
-            total += 8
-    print("Total Income: $" + str(total))
-    print("Net Income: $" + str(total - (entryfee * entries)))
-
-def graphVsIndex():
-    # y_val_array = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineup_permutations.csv").to_numpy()
-    # y_val = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineup_permutations.csv")
-    y_val_array = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineups_selected.csv").to_numpy()
-    y_val = pd.read_csv("ContestsOutput/" + file[21:] + "_BEFORE_GAME_lineups_selected.csv")
-    x_val = []
-
-    for i in range(0, len(y_val_array)):
-        x_val.append(i)
-
-    sns.scatterplot(x_val, y_val["LineupScore"], alpha=.1).set(
-        title="Submission Lineup Rank vs. Predicted Outcome Score")
-
-    sns.scatterplot(x_val, y_val["LineupScore"], alpha=.1).set(
-        title="Submission Lineup Rank vs. Predicted Outcome Score")
-    plt.show()
 
 # main()
-# parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(getBoxScoreIndex('SingleGameContestCSVs/08222021LAACLE'), 'SingleGameContestCSVs/08222021LAACLE')
+createCombinationsFromCSV(0, 'SingleGameContestCSVs/08252021LADSD', '/ALL')
+# parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(getBoxScoreIndex('SingleGameContestCSVs/08222021LAACLE'), 'SingleGameContestCSVs/08222021LAACLE', "ALL/")
 
