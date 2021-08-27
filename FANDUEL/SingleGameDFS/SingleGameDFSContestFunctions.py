@@ -529,6 +529,6 @@ def getDateFormattedtoDatetime(date):  # date entered like 01012021
 
 
 # main()
-createCombinationsFromCSV(0, 'SingleGameContestCSVs/08252021LADSD', '/ALL')
+createCombinationsFromCSV(0, 'SingleGameContestCSVs/08272021NYYOAK', '/ALL')
 # parseBStoFPPG_addFPPGtoCSV_addSCOREStoCOMBOS(getBoxScoreIndex('SingleGameContestCSVs/08222021LAACLE'), 'SingleGameContestCSVs/08222021LAACLE', "ALL/")
 

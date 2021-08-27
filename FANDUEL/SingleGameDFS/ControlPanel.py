@@ -308,7 +308,7 @@ def permutationsStatistics():
             # print('\n')
 
 def makeSubmission():
-    directory = 'C:/Users/samue/PycharmProjects/MLBFanduelProject/FANDUEL/SingleGameDFS/ContestsOutput/ALL/08252021LADSD_BEFORE_GAME_lineup_permutations.csv'
+    directory = 'C:/Users/samue/PycharmProjects/MLBFanduelProject/FANDUEL/SingleGameDFS/ContestsOutput/ALL/08272021NYYOAK_BEFORE_GAME_lineup_permutations.csv'
     ML2(directory)
     directory='C:/Users/samue/PycharmProjects/MLBFanduelProject/FANDUEL/SingleGameDFS/ContestsOutput/ALL/test/killme.csv'
 
@@ -351,7 +351,7 @@ def makeSubmission():
 
     pd.DataFrame(selections).to_csv(str(directory[:-4]+'.csv'), index=False)
     submissionarr = []
-    players = pd.read_csv('C:/Users/samue/PycharmProjects/MLBFanduelProject/FANDUEL/SingleGameDFS/ContestsOutput/ALL/08252021LADSD_BEFORE_GAME_reduced_players_list.csv').to_numpy()
+    players = pd.read_csv('C:/Users/samue/PycharmProjects/MLBFanduelProject/FANDUEL/SingleGameDFS/ContestsOutput/ALL/08272021NYYOAK_BEFORE_GAME_reduced_players_list.csv').to_numpy()
     for i in range(0,len(selections)):
         arr = []
         arr.append(players[int(selections[i][1])][0])
